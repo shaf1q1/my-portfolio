@@ -6,7 +6,7 @@ const JOBS = [
     date: "Sept 2025 - Feb 2026",
     role: "Web Developer Intern",
     company: "Universiti Kebangsaan Malaysia (UKM)",
-    desc: "Architecting internal digital solutions and performing rigorous QA testing.",
+    desc: "Developed and testing the university's internal website for management purposes.",
     current: true
   },
   {

@@ -1,94 +1,54 @@
-"use client"; // Required for Framer Motion
-
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Code2, Layout, Server, Database, Zap } from "lucide-react";
+import { ArrowRight, Code2, Layout, Server, Database } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { client } from "@/sanity/lib/client";
 import ContactForm from "@/components/ContactForm";
 
-const SERVICES = [
-  {
-    title: "Frontend Development",
-    desc: "Crafting visually stunning, responsive, and accessible user interfaces using Next.js and Tailwind CSS.",
-    icon: <Layout className="h-8 w-8 text-primary" />,
-    features: ["React / Next.js", "TypeScript", "Framer Motion"]
-  },
-  {
-    title: "Backend Solutions",
-    desc: "Building robust server-side logic and scalable APIs to power your web applications.",
-    icon: <Server className="h-8 w-8 text-primary" />,
-    features: ["Node.js / Express", "API Integration", "CodeIgniter 4"]
-  },
-  {
-    title: "Database Design",
-    desc: "Designing efficient database schemas and managing data integrity for high-performance apps.",
-    icon: <Database className="h-8 w-8 text-primary" />,
-    features: [ "MySQL", "HeidiSQL"]
-  },
-];
+/**
+ * 1. ICON MAPPING
+ * Since Sanity returns a string like "layout", we map it to 
+ * the actual Lucide Icon component here.
+ */
+const ICON_MAP: Record<string, React.ReactNode> = {
+  layout: <Layout className="h-8 w-8 text-primary" />,
+  server: <Server className="h-8 w-8 text-primary" />,
+  database: <Database className="h-8 w-8 text-primary" />,
+};
 
-function Services() {
-  return (
-    <section className="py-24 px-6 max-w-6xl mx-auto">
-      <div className="mb-16 space-y-4">
-        <h2 className="text-4xl md:text-5xl font-black tracking-tight">Services</h2>
-        <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed">
-          I provide end-to-end development services to help you turn your ideas into 
-          <span className="text-foreground font-medium"> production-ready </span> products.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {SERVICES.map((service, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
-            className="group p-8 rounded-[2.5rem] bg-card border border-border/50 hover:border-primary/50 transition-all duration-300 relative overflow-hidden"
-          >
-            {/* Background Glow on Hover */}
-            <div className="absolute -right-10 -top-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
-            
-            <div className="mb-6 p-4 w-fit rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
-              {service.icon}
-            </div>
-            
-            <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              {service.desc}
-            </p>
-            
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-              {service.features.map((feature, fIndex) => (
-                <li key={fIndex} className="flex items-center gap-2 text-sm font-medium text-foreground/80">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
+/**
+ * 2. DATA FETCHING
+ * We fetch both Services and Projects (if you want to add them later).
+ */
+async function getSanityData() {
+  const query = `*[_type == "service"] | order(_createdAt asc) {
+    _id,
+    title,
+    description,
+    icon,
+    features
+  }`;
+  return await client.fetch(query);
 }
 
-export default function Home() {
+export default async function Home() {
+  // Fetch real data from your Sanity Studio
+  const sanityServices = await getSanityData();
+
+  // If Sanity is empty, we use your original static data as a fallback
+  const displayServices = sanityServices.length > 0 ? sanityServices : STATIC_SERVICES_FALLBACK;
+
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Background Glows */}
+      {/* Background Ambient Effect */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]" />
         <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]" />
       </div>
 
-      {/* Hero Section */}
+      {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center px-6 pt-20 pb-12">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
-          {/* Left Side: Content */}
           <div className="space-y-8 text-left animate-in fade-in slide-in-from-left-8 duration-1000">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-muted border border-border/50 text-xs font-medium text-muted-foreground">
               <span className="relative flex h-2 w-2">
@@ -107,8 +67,8 @@ export default function Home() {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-[500px] leading-relaxed">
-              Hi, I'm <span className="text-foreground font-semibold underline decoration-primary/30 underline-offset-4">Muhammad Shafiq</span>. 
-              Full-stack Developer crafting high-performance applications with Next.js.
+              Hi, I&apos;m <span className="text-foreground font-semibold underline decoration-primary/30 underline-offset-4">Muhammad Shafiq</span>. 
+              Full-stack Developer crafting high-performance applications with <span className="text-primary font-mono text-sm">Next.js + Sanity</span>.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -121,9 +81,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Side: Framed Image */}
+          {/* Right Side Image */}
           <div className="relative flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-12 duration-1000 delay-200">
-            <div className="relative w-72 h-72 md:w-[450px] md:h-[450px] lg:translate-x-12">
+            <div className="relative w-72 h-72 md:w-[450px] md:h-[450px]">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-[3rem] rotate-6 scale-105 -z-10 border border-primary/10" />
               <div className="absolute inset-0 border-2 border-primary/10 rounded-[3rem] -rotate-3 -z-10" />
               
@@ -131,50 +91,95 @@ export default function Home() {
                 <img 
                   src="/shafiq.jpeg" 
                   alt="Muhammad Shafiq"
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-in-out"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
 
-              <div className="absolute -bottom-4 -left-8 bg-card border border-border/50 p-4 rounded-2xl shadow-2xl z-20 hidden md:flex items-center gap-3 animate-bounce-slow">
+              <div className="absolute -bottom-4 -left-8 bg-card border border-border/50 p-4 rounded-2xl shadow-2xl z-20 hidden md:flex items-center gap-3">
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <Code2 className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Expertise</p>
-                  <p className="text-sm font-bold text-foreground">Next.js & React</p>
+                  <p className="text-sm font-bold text-foreground">Next.js & Sanity CMS</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Floating Mouse Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 hidden md:flex">
-          <div className="w-[22px] h-[35px] border-2 border-foreground rounded-full flex justify-center p-1">
-             <div className="w-1 h-2 bg-foreground rounded-full animate-scroll-dot" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Scroll</span>
+      {/* SERVICES SECTION */}
+      <section className="py-24 px-6 max-w-6xl mx-auto">
+        <div className="mb-16 space-y-4">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight">Services</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed">
+            I provide end-to-end development services using a <span className="text-foreground font-medium">modern, manageable</span> tech stack.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayServices.map((service: any, index: number) => (
+            <div 
+              key={service._id || index} 
+              className="group p-8 rounded-[2.5rem] bg-card border border-border/50 hover:border-primary/50 transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="mb-6 p-4 w-fit rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                {/* Dynamically render icon based on Sanity value */}
+                {ICON_MAP[service.icon] || <Layout className="h-8 w-8 text-primary" />}
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                {service.description || service.desc}
+              </p>
+              
+              <ul className="grid grid-cols-1 gap-y-2">
+                {service.features?.map((feature: string, fIndex: number) => (
+                  <li key={fIndex} className="flex items-center gap-2 text-sm font-medium text-foreground/80">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Services Section */}
-      <Services />
-
-      {/* Contact Section with Scroll Reveal */}
-      <motion.section 
-        id="contact" 
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 py-32 px-6 max-w-3xl mx-auto w-full"
-      >
+      {/* CONTACT SECTION */}
+      <section id="contact" className="py-32 px-6 max-w-3xl mx-auto w-full">
         <div className="text-center mb-12 space-y-3">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Let's collaborate</h2>
-          <p className="text-muted-foreground text-lg">Have a project in mind? Let's build something incredible.</p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Let&apos;s collaborate</h2>
+          <p className="text-muted-foreground text-lg">Have a project in mind? Let&apos;s build something incredible.</p>
         </div>
         <ContactForm />
-      </motion.section>
+      </section>
     </div>
   );
 }
+
+/**
+ * STATIC FALLBACK
+ * This displays if your Sanity database is empty.
+ */
+const STATIC_SERVICES_FALLBACK = [
+  {
+    title: "Frontend Development",
+    desc: "Crafting visually stunning, responsive, and accessible user interfaces.",
+    icon: "layout",
+    features: ["Next.js", "TypeScript", "Tailwind CSS"]
+  },
+  {
+    title: "Backend & CMS",
+    desc: "Robust server-side logic and headless CMS integration.",
+    icon: "server",
+    features: ["Node.js", "Sanity.io", "API Design"]
+  },
+  {
+    title: "Database Management",
+    desc: "Designing efficient schemas and managing data integrity.",
+    icon: "database",
+    features: ["PostgreSQL", "MySQL", "Prisma"]
+  },
+];s
