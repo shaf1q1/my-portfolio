@@ -29,11 +29,12 @@ export default function ContactForm() {
     resolver: zodResolver(formSchema),
   });
 
-  // DEBUG: This alerts you if validation is why the form won't send
-  const onInvalid = (errors: any) => {
-    console.error("Validation Failed:", errors);
-    alert("Check errors: " + Object.values(errors).map((e: unknown) => e.message).join(", "));
-  };
+ const onInvalid = (errors: any) => {
+  console.error("Validation Failed:", errors);
+  // We cast the error values to 'any' here to bypass the strict type check for the alert
+  const errorMessages = Object.values(errors).map((error: any) => error.message).join(", ");
+  alert("Please check the following fields: " + errorMessages);
+};
 
   const onSubmit = async (data: FormData) => {
     setStatus("loading");
@@ -44,7 +45,7 @@ export default function ContactForm() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          access_key: "1f7d1c29-73fa-4b64-b2e3-6f363f8ecf49",
+         access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "1f7d1c29-73fa-4b64-b2e3-6f363f8ecf49",
           ...data,
         }),
       });
