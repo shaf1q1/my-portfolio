@@ -38,7 +38,7 @@ export default function SkillsPage() {
         {Object.keys(SKILLS_DATA).map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab as any)}
+            onClick={() => setActiveTab(tab as keyof typeof SKILLS_DATA)}
             className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
               activeTab === tab 
                 ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.5)]" 

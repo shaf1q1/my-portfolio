@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, CheckCircle2, Send, AlertCircle } from "lucide-react";
@@ -29,10 +29,11 @@ export default function ContactForm() {
     resolver: zodResolver(formSchema),
   });
 
- const onInvalid = (errors: any) => {
+const onInvalid = (errors: FieldValues) => {
   console.error("Validation Failed:", errors);
-  // We cast the error values to 'any' here to bypass the strict type check for the alert
-  const errorMessages = Object.values(errors).map((error: any) => error.message).join(", ");
+  const errorMessages = Object.values(errors)
+    .map((error) => (error as { message: string }).message)
+    .join(", ");
   alert("Please check the following fields: " + errorMessages);
 };
 
