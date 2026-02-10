@@ -16,6 +16,19 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 /**
+ * SERVICE INTERFACE
+ * Defines the shape of a service object from Sanity
+ */
+interface Service {
+  _id: string;
+  title: string;
+  description?: string;
+  desc?: string;
+  icon: string;
+  features?: string[];
+}
+
+/**
  * 2. DATA FETCHING
  * We fetch both Services and Projects (if you want to add them later).
  */
@@ -119,7 +132,7 @@ export default async function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayServices.map((service: any, index: number) => (
+          {displayServices.map((service: Service, index: number) => (
             <div 
               key={service._id || index} 
               className="group p-8 rounded-[2.5rem] bg-card border border-border/50 hover:border-primary/50 transition-all duration-300 relative overflow-hidden"
@@ -182,4 +195,4 @@ const STATIC_SERVICES_FALLBACK = [
     icon: "database",
     features: ["PostgreSQL", "MySQL", "Prisma"]
   },
-];s
+];
