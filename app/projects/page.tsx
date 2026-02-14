@@ -14,9 +14,9 @@ const PROJECTS = [
     github: "#" // Added github link field
   },
   {
-    title: "Project New Project",
+    title: "Academic Research Tracker",
     desc: "A modern approach to data visualization and management for academic research tracking and collaborative data entry.",
-    tags: ["Next.js", "TypeScript", "Prisma", "PostgreSQL"],
+    tags: ["Python", "Django","HeidiSql"],
     image: "/project2.png", 
     link: "#",
     github: "#"
@@ -47,7 +47,7 @@ export default function ProjectsPage() {
         className="mb-20"
       >
         <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/50">
-          Selected Work
+         Previous Projects
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl max-w-xl leading-relaxed">
           A focused collection of digital products where <span className="text-primary font-medium">performance</span> meets <span className="text-primary font-medium">user-centric design</span>.
